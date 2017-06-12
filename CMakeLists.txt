@@ -3,5 +3,5 @@ project(medoidStoringAlgorithm)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES main.cpp textDataReader.cpp textDataParser.cpp)
 add_executable(medoidStoringAlgorithm ${SOURCE_FILES})
