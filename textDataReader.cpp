@@ -14,8 +14,11 @@ void textDataReader::getNextRawDatum(void *target)
   // If file is opened
   if(sourceFile->is_open())
   {
-    std::string *line = static_cast<std::string*>(target);
-    std::getline(*sourceFile, *line);
+    if(hasMoreData())
+    {
+      std::string *line = static_cast<std::string *>(target);
+      std::getline(*sourceFile, *line);
+    }
   }
   else
   {
@@ -64,6 +67,11 @@ void textDataReader::gatherAttributesData(void *attributesPtr)
   while(line.find("@data")) getNextRawDatum(&line);
   getNextRawDatum(&line);
 
+}
+
+bool textDataReader::hasMoreData()
+{
+  return !sourceFile->eof();
 }
 
 

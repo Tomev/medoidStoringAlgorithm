@@ -8,7 +8,8 @@
 
 class sample
 {
-
+  public:
+    virtual void print() = 0;
 };
 
 

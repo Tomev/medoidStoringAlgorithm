@@ -31,7 +31,7 @@ class textDataReader : public dataReader
     textDataReader(std::ifstream *sourceFile);
     void getNextRawDatum(void *target);
     void gatherAttributesData(void *attributes);
-
+    bool hasMoreData();
   private:
     std::ifstream *sourceFile;
 

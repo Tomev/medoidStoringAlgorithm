@@ -12,6 +12,7 @@ class dataReader
 
     virtual void getNextRawDatum(void *target) = 0;
     virtual void gatherAttributesData(void *attributes) = 0;
+    virtual bool hasMoreData() = 0;
 };
 
 

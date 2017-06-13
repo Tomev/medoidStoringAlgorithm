@@ -27,8 +27,8 @@ void textDataParser::parseData(void *target)
 
 int textDataParser::addDatumToContainer(void *container)
 {
-  std::vector<sample> *samples = static_cast<std::vector<sample>*>(container);
-  samples->push_back(sample());
+  std::vector<sample*> *samples = static_cast<std::vector<sample*>*>(container);
+  samples->push_back(new textDataSample());
 
   return samples->size();
 }

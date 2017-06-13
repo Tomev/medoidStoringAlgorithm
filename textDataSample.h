@@ -15,7 +15,6 @@ class textDataSample : public sample
 {
   public:
     std::vector<std::string> values;
-
     void print();
 };
 
