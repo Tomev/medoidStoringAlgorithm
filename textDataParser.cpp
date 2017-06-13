@@ -14,7 +14,7 @@ textDataParser::textDataParser()
 void textDataParser::parseData(void *target)
 {
   std::string *line = static_cast<std::string*>(this->buffor);
-  sample *sampleHolder = static_cast<sample*>(target);
+  textDataSample *sampleHolder = static_cast<textDataSample*>(target);
 
   std::istringstream ss(*line);
   std::string value;

@@ -10,27 +10,11 @@
  */
 
 #include "dataParser.h"
+#include "textDataSample.h"
 
 #include <string>
 #include <vector>
 #include <c++/iostream>
-
-struct sample
-{
-  std::vector<std::string> values;
-
-  void print()
-  {
-    std::cout << "Data: ";
-
-    for(int i = 0; i < values.size(); ++i)
-    {
-      std::cout << values.at(i) << ", ";
-    }
-
-    std::cout << std::endl;
-  }
-};
 
 class textDataParser : public dataParser
 {
