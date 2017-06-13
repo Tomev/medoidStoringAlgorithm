@@ -30,7 +30,7 @@ int main()
     << medoids.at(0).at(0).size() << std::endl
     << medoids.at(0).at(medoids.at(0).size()-1).size() << std::endl
     << medoids.at(medoids.size()-1).size() << std::endl
-    << medoids.at(medoids.size()-1).at(medoids.at(medoids.size()-1).size()-1).size();
+    << medoids.at(medoids.size()-1).at(medoids.at(medoids.size()-1).size()-1).size() << std::endl;
 
   medoids.at(0).at(0).at(0)->print();
 

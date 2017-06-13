@@ -9,12 +9,12 @@
  * Parsing from .arff files to sample.
  */
 
-#include "dataParser.h"
-#include "textDataSample.h"
-
 #include <string>
 #include <vector>
 #include <c++/iostream>
+
+#include "dataParser.h"
+#include "textDataSample.h"
 
 class textDataParser : public dataParser
 {
@@ -24,8 +24,8 @@ class textDataParser : public dataParser
     textDataParser();
 
     void parseData(void *target);
-    int addDatumToContainer(void *container);
-    void writeDatumOnPosition(void *container, int position);
+    int addDatumToContainer(std::vector<sample*> *container);
+    void writeDatumOnPosition(std::vector<sample*> *container, int position);
 };
 
 

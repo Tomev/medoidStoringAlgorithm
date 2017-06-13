@@ -8,12 +8,12 @@
 
 textDataParser::textDataParser()
 {
-  this->buffor = new std::string();
+  this->buffer = new std::string();
 }
 
 void textDataParser::parseData(void *target)
 {
-  std::string *line = static_cast<std::string*>(this->buffor);
+  std::string *line = static_cast<std::string*>(this->buffer);
   textDataSample *sampleHolder = static_cast<textDataSample*>(target);
 
   std::istringstream ss(*line);
@@ -22,18 +22,16 @@ void textDataParser::parseData(void *target)
   sampleHolder->values.clear();
 
   while(getline(ss, value, ',')) sampleHolder->values.push_back(value);
-
 }
 
-int textDataParser::addDatumToContainer(void *container)
+int textDataParser::addDatumToContainer(std::vector<sample*> *container)
 {
-  std::vector<sample*> *samples = static_cast<std::vector<sample*>*>(container);
-  samples->push_back(new textDataSample());
+  container->push_back(new textDataSample());
 
-  return samples->size();
+  return container->size()-1;
 }
 
-void textDataParser::writeDatumOnPosition(void *container, int position)
+void textDataParser::writeDatumOnPosition(std::vector<sample*> *container, int position)
 {
-  parseData(static_cast<std::vector<sample*>*>(container)->at(position));
+  parseData(container->at(position));
 }

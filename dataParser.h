@@ -5,15 +5,19 @@
 #ifndef RESERVOIRALGORITHM_DATAPARSER_H
 #define RESERVOIRALGORITHM_DATAPARSER_H
 
+#include <vector>
+
+#include "sample.h"
+
 class dataParser
 {
   public:
 
     virtual void parseData(void *target) = 0;
-    virtual int addDatumToContainer(void *container) = 0;
-    virtual void writeDatumOnPosition(void *container, int position) = 0;
+    virtual int addDatumToContainer(std::vector<sample*> *container) = 0;
+    virtual void writeDatumOnPosition(std::vector<sample*> *container, int position) = 0;
 
-    void *buffor;
+    void *buffer;
 };
 
 

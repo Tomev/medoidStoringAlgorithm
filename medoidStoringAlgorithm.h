@@ -22,7 +22,7 @@ class medoidStoringAlgorithm
     dataParser *parser;
     dataReader *reader;
 
-    std::vector<sample*> buffor;
+    std::vector<sample*> buffer;
     std::set<int> medoidsIndexes;
 
     // It'd be best if this was
