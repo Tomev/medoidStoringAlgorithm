@@ -16,12 +16,21 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
+
+struct attributeData
+{
+  std::string attributeName;
+  std::string attributeType;
+};
+
 
 class textDataReader : public dataReader
 {
   public:
     textDataReader(std::ifstream *sourceFile);
     void getNextRawDatum(void *target);
+    void gatherAttributesData(void *attributes);
 
   private:
     std::ifstream *sourceFile;
