@@ -35,5 +35,5 @@ int textDataParser::addDatumToContainer(void *container)
 
 void textDataParser::writeDatumOnPosition(void *container, int position)
 {
-  parseData(&(static_cast<std::vector<sample>*>(container)->at(position)));
+  parseData(static_cast<std::vector<sample*>*>(container)->at(position));
 }
