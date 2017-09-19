@@ -1,7 +1,3 @@
-//
-// Created by Tomev on 13.06.2017.
-//
-
 #include <random>
 #include <iostream>
 
@@ -17,16 +13,15 @@ void medoidStoringAlgorithm::findAndStoreMedoids(std::vector<std::vector<std::ve
 
   while(reader->hasMoreData())
   {
-    std::cout << "Iteration: " << i << std::endl;
-    ++i;
+    std::cout << "Iteration: " << i++ << std::endl;
 
-    fillBufforWithData();
+    fillBufferWithData();
     selectMedoids(&buffer);
     addMedoidsOnLevel(target, 0);
   }
 }
 
-void medoidStoringAlgorithm::fillBufforWithData()
+void medoidStoringAlgorithm::fillBufferWithData()
 {
   buffer.clear();
 

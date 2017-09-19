@@ -25,7 +25,7 @@ class medoidStoringAlgorithm
     int BUFFER_SIZE     = 1000;
     int MEDOIDS_NUMBER  = 10;
 
-    void fillBufforWithData();
+    void fillBufferWithData();
     void selectMedoids(std::vector<sample*>* container);
     void addMedoidsOnLevel(std::vector<std::vector<std::vector<sample *>>>* target, int level);
 
