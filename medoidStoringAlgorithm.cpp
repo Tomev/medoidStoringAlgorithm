@@ -21,21 +21,21 @@ void medoidStoringAlgorithm::findAndStoreMedoids(std::vector<std::vector<std::ve
     ++i;
 
     fillBufforWithData();
-    selectMedoids(&buffor);
+    selectMedoids(&buffer);
     addMedoidsOnLevel(target, 0);
   }
 }
 
 void medoidStoringAlgorithm::fillBufforWithData()
 {
-  buffor.clear();
+  buffer.clear();
 
-  while(buffor.size() < BUFFOR_SIZE)
+  while(buffer.size() < BUFFER_SIZE)
   {
-    parser->addDatumToContainer(&buffor);
+    parser->addDatumToContainer(&buffer);
 
     reader->getNextRawDatum(parser->buffor);
-    parser->parseData(buffor.at(buffor.size()-1));
+    parser->parseData(buffer.at(buffer.size()-1));
   }
 }
 
@@ -58,16 +58,16 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::vect
     target->at(level).push_back(std::vector<sample*>());
   }
 
-  if(target->at(level).back().size() == BUFFOR_SIZE) target->at(level).push_back(std::vector<sample*>());
+  if(target->at(level).back().size() == BUFFER_SIZE) target->at(level).push_back(std::vector<sample*>());
 
   while(!medoidsIndexes.empty())
   {
-    target->at(level).back().push_back(buffor.at(*medoidsIndexes.begin()));
+    target->at(level).back().push_back(buffer.at(*medoidsIndexes.begin()));
 
     medoidsIndexes.erase(medoidsIndexes.begin());
   }
 
-  if(target->at(level).back().size() == BUFFOR_SIZE)
+  if(target->at(level).back().size() == BUFFER_SIZE)
   {
     selectMedoids(&(target->at(level).back()));
     addMedoidsOnLevel(target, level+1);
