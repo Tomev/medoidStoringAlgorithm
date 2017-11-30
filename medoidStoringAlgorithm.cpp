@@ -3,22 +3,16 @@
 
 #include "medoidStoringAlgorithm.h"
 
-medoidStoringAlgorithm::medoidStoringAlgorithm(dataParser *parser, dataReader *reader) :
-reader(reader), parser(parser)
+#include "../kMedoidsAlgorithm/kMedoidsAlgorithm.h"
+
+medoidStoringAlgorithm::medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm) :
+  gAlgorithm(algorithm)
 {}
 
-void medoidStoringAlgorithm::findAndStoreMedoids(std::vector<std::vector<std::vector<sample *>>> *target)
+void medoidStoringAlgorithm::findAndStoreMedoids(std::vector<std::shared_ptr<sample> > *objects, std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target)
 {
-  int i = 0;
-
-  while(reader->hasMoreData())
-  {
-    std::cout << "Iteration: " << i++ << std::endl;
-
-    fillBufferWithData();
-    selectMedoids(&buffer);
-    addMedoidsOnLevel(target, 0);
-  }
+  gAlgorithm->groupObjects(objects, &clusters);
+  addMedoidsOnLevel(target.get(), 0);
 }
 
 void medoidStoringAlgorithm::fillBufferWithData()
@@ -29,42 +23,62 @@ void medoidStoringAlgorithm::fillBufferWithData()
   {
     parser->addDatumToContainer(&buffer);
 
-    reader->getNextRawDatum(parser->buffor);
-    parser->parseData(buffer.at(buffer.size()-1));
+    reader->getNextRawDatum(parser->buffer);
+    parser->parseData(buffer.at(buffer.size()-1).get());
   }
 }
 
-void medoidStoringAlgorithm::selectMedoids(std::vector<sample *> *container)
+void medoidStoringAlgorithm::selectMedoids(std::vector<std::shared_ptr<cluster>> *container)
 {
-  // This method temporarily selects objects at random.
-  medoidsIndexes.clear();
-
-  while(medoidsIndexes.size() < MEDOIDS_NUMBER)
-  {
-    medoidsIndexes.insert(rand() % container->size());
-  }
+  gAlgorithm->groupClusters(container, &clusters);
 }
 
-void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::vector<sample *>>>* target, int level)
+void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shared_ptr<cluster> > > *target, unsigned int level)
 {
+  // Create new level if needed
   if(target->size() == level)
+    target->push_back(std::vector<std::shared_ptr<cluster>>());
+
+  long clusterShift = target->at(level).size();
+
+
+  // Create clusters summaries
+  for(unsigned int i = 0; i < clusters.size(); ++i)
   {
-    target->push_back(std::vector<std::vector<sample*>>());
-    target->at(level).push_back(std::vector<sample*>());
+    std::shared_ptr<sample> s;
+
+    s = clusters[i].get()->getMedoid()->getObject();
+
+    std::shared_ptr<cluster> c = std::make_shared<cluster>(cluster(clusterShift + i,
+                                                                   s));
+
+    c.get()->setWeight(clusters[i].get()->getWeight());
+
+    target->at(level).push_back(c);
   }
 
-  if(target->at(level).back().size() == BUFFER_SIZE) target->at(level).push_back(std::vector<sample*>());
+  clusters.clear();
 
-  while(!medoidsIndexes.empty())
+  long sumWeight = 0;
+
+  for(std::shared_ptr<cluster> c : target->at(0))
+      sumWeight += c.get()->getWeight();
+
+  std::cout << "Summaric weight: " << sumWeight << ".\n";
+
+  // Check if there are next level clusters
+  if(target->at(level).size() >= BUFFER_SIZE)
   {
-    target->at(level).back().push_back(buffer.at(*medoidsIndexes.begin()));
+    //clusters.push_back(std::vector<std::shared_ptr<cluster>>());
 
-    medoidsIndexes.erase(medoidsIndexes.begin());
-  }
+    std::cout << "Next level - " << level + 1 << ".\n";
 
-  if(target->at(level).back().size() == BUFFER_SIZE)
-  {
-    selectMedoids(&(target->at(level).back()));
+    selectMedoids(&(target->at(level)));
+
+    std::cout << "Medoids selected.";
+
     addMedoidsOnLevel(target, level+1);
+
+    target->at(level).clear();
   }
 }

@@ -3,32 +3,38 @@
 
 #include <vector>
 #include <set>
+#include <memory>
 
-#include "dataParser.h"
-#include "dataReader.h"
-#include "sample.h"
+#include "../../Reservoir_sampling/sample.h"
+#include "../../Reservoir_sampling/dataParser.h"
+#include "../../Reservoir_sampling/dataReader.h"
+
+#include "../kMedoidsAlgorithm/groupingAlgorithm/groupingAlgorithm.h"
 
 class medoidStoringAlgorithm
 {
   public:
-    medoidStoringAlgorithm(dataParser *parser, dataReader *reader);
-    void findAndStoreMedoids(std::vector<std::vector<std::vector<sample*>>>* target);
+    medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm);
+
+    void findAndStoreMedoids(std::vector<std::shared_ptr<sample> > *objects,
+                             std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target);
+
 
   private:
-    dataParser *parser;
-    dataReader *reader;
 
-    std::vector<sample*> buffer;
+    std::unique_ptr<dataParser> parser;
+    std::unique_ptr<dataReader> reader;
+    std::shared_ptr<groupingAlgorithm> gAlgorithm;
+
+    std::vector<std::shared_ptr<sample>> buffer;
+    std::vector<std::shared_ptr<cluster>> clusters;
     std::set<int> medoidsIndexes;
 
-    // It'd be best if this was
-    int BUFFER_SIZE     = 1000;
-    int MEDOIDS_NUMBER  = 10;
+    unsigned int BUFFER_SIZE = 100;
 
     void fillBufferWithData();
-    void selectMedoids(std::vector<sample*>* container);
-    void addMedoidsOnLevel(std::vector<std::vector<std::vector<sample *>>>* target, int level);
-
+    void selectMedoids(std::vector<std::shared_ptr<cluster>> *container);
+    void addMedoidsOnLevel(std::vector<std::vector<std::shared_ptr<cluster>>>* target, unsigned int level);
 
 };
 
