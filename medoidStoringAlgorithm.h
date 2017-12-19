@@ -16,8 +16,10 @@ class medoidStoringAlgorithm
   public:
     medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm);
 
-    void findAndStoreMedoids(std::vector<std::shared_ptr<sample> > *objects,
+    void findAndStoreMedoidsFromObjects(std::vector<std::shared_ptr<sample> > *objects,
                              std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target);
+    void findAndStoreMedoidsFromClusters(std::vector<std::shared_ptr<cluster>> *container,
+        std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target);
 
 
   private:
