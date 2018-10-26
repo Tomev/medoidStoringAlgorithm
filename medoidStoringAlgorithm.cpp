@@ -61,7 +61,8 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     std::shared_ptr<cluster> c = std::make_shared<cluster>(cluster(clusterShift + i,
                                                                    s));
 
-    c.get()->setWeight(clusters[i].get()->getWeight());
+    c->setWeight(clusters[i].get()->getWeight());
+    c->setVariantion(clusters[i]->getVariation());
 
     target->at(level).push_back(c);
   }
