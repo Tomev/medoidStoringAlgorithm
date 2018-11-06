@@ -72,6 +72,7 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     c->_lastPrediction = clusters[i]->getLastPrediction();
     c->_deactualizationParameter = clusters[i]->getDeactualizationParameter();
     c->predictionParameters = clusters[i]->getPredictionParameters();
+    c->_lastKDEValue = clusters[i]->getLastKDEValue();
 
     target->at(level).push_back(c);
   }
