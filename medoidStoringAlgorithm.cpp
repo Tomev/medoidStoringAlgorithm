@@ -1,6 +1,8 @@
 #include <random>
 #include <iostream>
 
+#include <QDebug>
+
 #include "medoidStoringAlgorithm.h"
 
 #include "../kMedoidsAlgorithm/kMedoidsAlgorithm.h"
@@ -50,6 +52,7 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
 
   long clusterShift = target->at(level).size();
 
+  qDebug() << "Creating summaries.";
 
   // Create clusters summaries
   for(unsigned int i = 0; i < clusters.size(); ++i)
@@ -60,9 +63,15 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
 
     std::shared_ptr<cluster> c = std::make_shared<cluster>(cluster(clusterShift + i,
                                                                    s));
-
     c->setWeight(clusters[i].get()->getWeight());
     c->setVariantion(clusters[i]->getVariation());
+
+    // Prediction
+    c->_tildedZ = clusters[i]->getTildedZ();
+    c->_doubleTildedZ = clusters[i]->getDoubleTildedZ();
+    c->_lastPrediction = clusters[i]->getLastPrediction();
+    c->_deactualizationParameter = clusters[i]->getDeactualizationParameter();
+    c->predictionParameters = clusters[i]->getPredictionParameters();
 
     target->at(level).push_back(c);
   }
