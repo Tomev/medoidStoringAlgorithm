@@ -24,8 +24,6 @@ void medoidStoringAlgorithm::findAndStoreMedoidsFromClusters(std::vector<std::sh
   addMedoidsOnLevel(target.get(), 0);
 }
 
-
-
 void medoidStoringAlgorithm::fillBufferWithData()
 {
   buffer.clear();
@@ -63,7 +61,7 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
 
     std::shared_ptr<cluster> c = std::make_shared<cluster>(cluster(clusterShift + i,
                                                                    s));
-    c->setWeight(clusters[i].get()->getWeight());
+    c->setWeight(clusters[i]->getWeight());
     c->setVariantion(clusters[i]->getVariation());
 
     // Prediction
