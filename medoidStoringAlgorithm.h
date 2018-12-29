@@ -32,7 +32,7 @@ class medoidStoringAlgorithm
     std::vector<std::shared_ptr<cluster>> clusters;
     std::set<int> medoidsIndexes;
 
-    unsigned int BUFFER_SIZE = 100;
+    unsigned int BUFFER_SIZE = 1000;
 
     void fillBufferWithData();
     void selectMedoids(std::vector<std::shared_ptr<cluster>> *container);
