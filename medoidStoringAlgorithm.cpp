@@ -14,14 +14,16 @@ medoidStoringAlgorithm::medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm
 void medoidStoringAlgorithm::findAndStoreMedoidsFromObjects(std::vector<std::shared_ptr<sample> > *objects, std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target)
 {
   gAlgorithm->groupObjects(objects, &clusters);
-  addMedoidsOnLevel(target.get(), 1);
+  //addMedoidsOnLevel(target.get(), 1); // For now store them in the same container
+  addMedoidsOnLevel(target.get(), 0);
 }
 
 void medoidStoringAlgorithm::findAndStoreMedoidsFromClusters(std::vector<std::shared_ptr<cluster> > *container,
                                                              std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target)
 {
   gAlgorithm->groupClusters(container, &clusters);
-  addMedoidsOnLevel(target.get(), 1);
+  //addMedoidsOnLevel(target.get(), 1); // For now store them in the same container
+  addMedoidsOnLevel(target.get(), 0);
 }
 
 void medoidStoringAlgorithm::fillBufferWithData()
@@ -82,7 +84,7 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
   for(std::shared_ptr<cluster> c : target->at(0))
       sumWeight += c.get()->getWeight();
 
-  std::cout << "Summaric weight: " << sumWeight << ".\n";
+  //std::cout << "Summaric weight: " << sumWeight << ".\n";
 
   // Check if there are next level clusters
   if(target->at(level).size() >= BUFFER_SIZE)
