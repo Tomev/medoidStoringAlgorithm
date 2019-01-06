@@ -7,8 +7,8 @@
 
 #include "../kMedoidsAlgorithm/kMedoidsAlgorithm.h"
 
-medoidStoringAlgorithm::medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm) :
-  gAlgorithm(algorithm)
+medoidStoringAlgorithm::medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm, unsigned int bufferSize) :
+  gAlgorithm(algorithm), BUFFER_SIZE(bufferSize)
 {}
 
 void medoidStoringAlgorithm::findAndStoreMedoidsFromObjects(std::vector<std::shared_ptr<sample> > *objects, std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target)
@@ -19,11 +19,11 @@ void medoidStoringAlgorithm::findAndStoreMedoidsFromObjects(std::vector<std::sha
 }
 
 void medoidStoringAlgorithm::findAndStoreMedoidsFromClusters(std::vector<std::shared_ptr<cluster> > *container,
-                                                             std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target)
+                                                             std::vector<std::vector<std::shared_ptr<cluster> > >  *target)
 {
   gAlgorithm->groupClusters(container, &clusters);
   //addMedoidsOnLevel(target.get(), 1); // For now store them in the same container
-  addMedoidsOnLevel(target.get(), 0);
+  addMedoidsOnLevel(target, 0);
 }
 
 void medoidStoringAlgorithm::fillBufferWithData()
@@ -84,6 +84,9 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
   for(std::shared_ptr<cluster> c : target->at(0))
       sumWeight += c.get()->getWeight();
 
+  qDebug() << "Clusters size: " << target->at(0).size();
+  qDebug() << "Buffer size: " << BUFFER_SIZE;
+
   //std::cout << "Summaric weight: " << sumWeight << ".\n";
 
   // Check if there are next level clusters
@@ -91,11 +94,11 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
   {
     //clusters.push_back(std::vector<std::shared_ptr<cluster>>());
 
-    std::cout << "Next level - " << level + 1 << ".\n";
+    qDebug() << "Next level - " << level + 1 << ".\n";
 
     selectMedoids(&(target->at(level)));
 
-    std::cout << "Medoids selected.";
+    qDebug() << "Medoids selected.";
 
     addMedoidsOnLevel(target, level+1);
 

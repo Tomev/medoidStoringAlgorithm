@@ -14,12 +14,12 @@
 class medoidStoringAlgorithm
 {
   public:
-    medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm);
+    medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm, unsigned int bufferSize);
 
     void findAndStoreMedoidsFromObjects(std::vector<std::shared_ptr<sample> > *objects,
                              std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target);
     void findAndStoreMedoidsFromClusters(std::vector<std::shared_ptr<cluster>> *container,
-        std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target);
+        std::vector<std::vector<std::shared_ptr<cluster> > > *target);
 
 
   private:
