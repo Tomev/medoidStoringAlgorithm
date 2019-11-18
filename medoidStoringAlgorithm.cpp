@@ -14,15 +14,15 @@ medoidStoringAlgorithm::medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm
 void medoidStoringAlgorithm::findAndStoreMedoidsFromObjects(std::vector<std::shared_ptr<sample> > *objects, std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target)
 {
   gAlgorithm->groupObjects(objects, &clusters);
-  //addMedoidsOnLevel(target.get(), 1); // For now store them in the same container
   addMedoidsOnLevel(target.get(), 0);
 }
 
 void medoidStoringAlgorithm::findAndStoreMedoidsFromClusters(std::vector<std::shared_ptr<cluster> > *container,
                                                              std::vector<std::vector<std::shared_ptr<cluster> > >  *target)
 {
+  qDebug() << "Start size: " << clusters.size();
   gAlgorithm->groupClusters(container, &clusters);
-  //addMedoidsOnLevel(target.get(), 1); // For now store them in the same container
+  qDebug() << "End size: " << clusters.size();
   addMedoidsOnLevel(target, 0);
 }
 
@@ -46,10 +46,7 @@ void medoidStoringAlgorithm::selectMedoids(std::vector<std::shared_ptr<cluster>>
 
 void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shared_ptr<cluster> > > *target, unsigned int level)
 {
-  // Create new level if needed
-  if(target->size() == level)
-    target->push_back(std::vector<std::shared_ptr<cluster>>());
-
+  (*target)[level].clear();
   long clusterShift = target->at(level).size();
 
   qDebug() << "Creating summaries.";
@@ -61,8 +58,7 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
 
     s = clusters[i].get()->getMedoid()->getObject();
 
-    std::shared_ptr<cluster> c = std::make_shared<cluster>(cluster(clusterShift + i,
-                                                                   s));
+    std::shared_ptr<cluster> c = std::make_shared<cluster>(cluster(clusterShift + i, s));
     c->setWeight(clusters[i]->getWeight());
     c->setVariantion(clusters[i]->getVariation());
 
@@ -73,7 +69,9 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     c->_deactualizationParameter = clusters[i]->getDeactualizationParameter();
     c->predictionParameters = clusters[i]->getPredictionParameters();
     c->_lastKDEValue = clusters[i]->getLastKDEValue();
+    c->timestamp = clusters[i]->getTimestamp();
 
+    //if(c->timestamp != 0)
     target->at(level).push_back(c);
   }
 
@@ -90,6 +88,7 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
   //std::cout << "Summaric weight: " << sumWeight << ".\n";
 
   // Check if there are next level clusters
+  /*
   if(target->at(level).size() >= BUFFER_SIZE)
   {
     //clusters.push_back(std::vector<std::shared_ptr<cluster>>());
@@ -104,4 +103,5 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
 
     target->at(level).clear();
   }
+  */
 }
