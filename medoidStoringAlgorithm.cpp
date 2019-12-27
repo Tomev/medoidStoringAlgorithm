@@ -70,6 +70,9 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     c->predictionParameters = clusters[i]->getPredictionParameters();
     c->_lastKDEValue = clusters[i]->getLastKDEValue();
     c->timestamp = clusters[i]->getTimestamp();
+    c->_djVector = clusters[i]->getDjVector();
+    c->_matrixDj = clusters[i]->getDjMatrix();
+    c->_j = clusters[i]->getPrognosisJ();
 
     //if(c->timestamp != 0)
     target->at(level).push_back(c);
