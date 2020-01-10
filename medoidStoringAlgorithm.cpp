@@ -73,15 +73,15 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
 
     c->_djVector = clusters[i]->getDjVector();
 
-    qDebug() << c->_djVector;
+    //qDebug() << c->_djVector;
 
     c->_matrixDj = clusters[i]->getDjMatrix();
 
-    qDebug() << c->_matrixDj;
+    //qDebug() << c->_matrixDj;
 
     c->_j = clusters[i]->getPrognosisJ();
 
-    qDebug() << c->_j;
+    //qDebug() << c->_j;
 
     //if(c->timestamp != 0)
     target->at(level).push_back(c);
