@@ -5,8 +5,6 @@
 
 #include "medoidStoringAlgorithm.h"
 
-#include "../kMedoidsAlgorithm/kMedoidsAlgorithm.h"
-
 medoidStoringAlgorithm::medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm, unsigned int bufferSize) :
   gAlgorithm(algorithm), BUFFER_SIZE(bufferSize)
 {}
@@ -33,7 +31,6 @@ void medoidStoringAlgorithm::fillBufferWithData()
   while(buffer.size() < BUFFER_SIZE)
   {
     parser->addDatumToContainer(&buffer);
-
     reader->getNextRawDatum(parser->buffer);
     parser->parseData(buffer.at(buffer.size()-1).get());
   }
@@ -54,6 +51,10 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
   // Create clusters summaries
   for(unsigned int i = 0; i < clusters.size(); ++i)
   {
+    // During experiments it happened so that two clusters had the same value which caused problems.
+    // Until discussed further omit clusters with weight 0.
+    if(clusters[i]->getWeight() == 0) continue;
+
     std::shared_ptr<sample> s;
 
     s = clusters[i].get()->getMedoid()->getObject();
@@ -63,27 +64,15 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     c->setVariantion(clusters[i]->getVariation());
 
     // Prediction
-    c->_tildedZ = clusters[i]->getTildedZ();
-    c->_doubleTildedZ = clusters[i]->getDoubleTildedZ();
     c->_lastPrediction = clusters[i]->getLastPrediction();
     c->_deactualizationParameter = clusters[i]->getDeactualizationParameter();
     c->predictionParameters = clusters[i]->getPredictionParameters();
-    c->_lastKDEValue = clusters[i]->getLastKDEValue();
-    c->timestamp = clusters[i]->getTimestamp();
-
     c->_djVector = clusters[i]->getDjVector();
-
-    //qDebug() << c->_djVector;
-
     c->_matrixDj = clusters[i]->getDjMatrix();
-
-    //qDebug() << c->_matrixDj;
-
     c->_j = clusters[i]->getPrognosisJ();
 
-    //qDebug() << c->_j;
+    c->timestamp = clusters[i]->getTimestamp();
 
-    //if(c->timestamp != 0)
     target->at(level).push_back(c);
   }
 
@@ -96,24 +85,4 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
 
   qDebug() << "Clusters size: " << target->at(0).size();
   qDebug() << "Buffer size: " << BUFFER_SIZE;
-
-  //std::cout << "Summaric weight: " << sumWeight << ".\n";
-
-  // Check if there are next level clusters
-  /*
-  if(target->at(level).size() >= BUFFER_SIZE)
-  {
-    //clusters.push_back(std::vector<std::shared_ptr<cluster>>());
-
-    qDebug() << "Next level - " << level + 1 << ".\n";
-
-    selectMedoids(&(target->at(level)));
-
-    qDebug() << "Medoids selected.";
-
-    addMedoidsOnLevel(target, level+1);
-
-    target->at(level).clear();
-  }
-  */
 }
