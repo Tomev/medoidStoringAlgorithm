@@ -68,7 +68,7 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     c->_deactualizationParameter = clusters[i]->getDeactualizationParameter();
     c->predictionParameters = clusters[i]->getPredictionParameters();
     c->_djVector = clusters[i]->getDjVector();
-    c->_matrixDj = clusters[i]->getDjMatrix();
+    //c->_matrixDj = clusters[i]->getDjMatrix();
     c->_j = clusters[i]->getPrognosisJ();
 
     c->timestamp = clusters[i]->getTimestamp();
