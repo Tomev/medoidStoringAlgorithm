@@ -54,7 +54,7 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     // During experiments it happened so that two clusters had the same value which caused problems.
     // Until discussed further omit clusters with weight 0.
     if(clusters[i]->getWeight() == 0) continue;
-    if(clusters[i]->size() > 1) continue;
+    //if(clusters[i]->size() > 1) continue;
 
     std::shared_ptr<sample> s;
 
