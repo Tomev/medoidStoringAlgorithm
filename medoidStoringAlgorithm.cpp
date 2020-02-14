@@ -54,6 +54,7 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     // During experiments it happened so that two clusters had the same value which caused problems.
     // Until discussed further omit clusters with weight 0.
     if(clusters[i]->getWeight() == 0) continue;
+    if(clusters[i]->size() > 1) continue;
 
     std::shared_ptr<sample> s;
 
@@ -68,12 +69,20 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     c->_deactualizationParameter = clusters[i]->getDeactualizationParameter();
     c->predictionParameters = clusters[i]->getPredictionParameters();
     c->_djVector = clusters[i]->getDjVector();
-    //c->_matrixDj = clusters[i]->getDjMatrix();
     c->_j = clusters[i]->getPrognosisJ();
 
     c->timestamp = clusters[i]->getTimestamp();
 
-    target->at(level).push_back(c);
+    if(clusters[i]->size() > 1){
+      qDebug() << "Here!";
+      std::vector<std::shared_ptr<cluster>> subclusters;
+      clusters[i]->getSubclusters(&subclusters);
+      //c = subclusters[0];
+
+    }
+    else{
+      target->at(level).push_back(c);
+    }
   }
 
   clusters.clear();
