@@ -11,18 +11,22 @@
 
 #include "../kMedoidsAlgorithm/groupingAlgorithm/groupingAlgorithm.h"
 
+#include <QRandomGenerator>
+
 class medoidStoringAlgorithm
 {
   public:
     medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm, unsigned int bufferSize);
 
     void findAndStoreMedoidsFromObjects(std::vector<std::shared_ptr<sample> > *objects,
-                             std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target);
+                                        std::vector<std::shared_ptr<cluster> > *target);
     void findAndStoreMedoidsFromClusters(std::vector<std::shared_ptr<cluster>> *container,
-        std::vector<std::vector<std::shared_ptr<cluster> > > *target);
+        std::vector<std::shared_ptr<cluster> > *target);
 
 
   private:
+
+    QRandomGenerator _gen;
 
     std::unique_ptr<dataParser> parser;
     std::unique_ptr<dataReader> reader;
@@ -36,7 +40,7 @@ class medoidStoringAlgorithm
 
     void fillBufferWithData();
     void selectMedoids(std::vector<std::shared_ptr<cluster>> *container);
-    void addMedoidsOnLevel(std::vector<std::vector<std::shared_ptr<cluster>>>* target, unsigned int level);
+    void addMedoidsToStorage(std::vector<std::shared_ptr<cluster>> *target);
 
 };
 

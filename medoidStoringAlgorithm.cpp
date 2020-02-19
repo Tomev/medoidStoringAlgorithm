@@ -7,21 +7,64 @@
 
 medoidStoringAlgorithm::medoidStoringAlgorithm(std::shared_ptr<groupingAlgorithm> algorithm, unsigned int bufferSize) :
   gAlgorithm(algorithm), BUFFER_SIZE(bufferSize)
-{}
+{
+    _gen = QRandomGenerator(0);
+}
 
-void medoidStoringAlgorithm::findAndStoreMedoidsFromObjects(std::vector<std::shared_ptr<sample> > *objects, std::shared_ptr<std::vector<std::vector<std::shared_ptr<cluster> > > > target)
+void medoidStoringAlgorithm::findAndStoreMedoidsFromObjects(std::vector<std::shared_ptr<sample> > *objects, std::vector<std::shared_ptr<cluster> > *target)
 {
   gAlgorithm->groupObjects(objects, &clusters);
-  addMedoidsOnLevel(target.get(), 0);
+  addMedoidsToStorage(target);
 }
 
 void medoidStoringAlgorithm::findAndStoreMedoidsFromClusters(std::vector<std::shared_ptr<cluster> > *container,
-                                                             std::vector<std::vector<std::shared_ptr<cluster> > >  *target)
+                                                             std::vector<std::shared_ptr<cluster> > *target)
 {
-  qDebug() << "Start size: " << clusters.size();
+  clusters.clear();
   gAlgorithm->groupClusters(container, &clusters);
-  qDebug() << "End size: " << clusters.size();
-  addMedoidsOnLevel(target, 0);
+  addMedoidsToStorage(target);
+
+  /*
+  qDebug() << "Random deletion.";
+  int rand = _gen.bounded(0, container->size() + 1);
+  container->erase(container->begin() + rand, container->begin() + rand + 1);
+
+  (*target)[0].clear();
+
+  for(auto c : *container){
+    (*target)[0].push_back(c);
+  }
+  */
+
+  /*
+  qDebug() << "First subcluster after grouping.";
+  gAlgorithm->groupClusters(container, &clusters);
+
+  (*target)[0].clear();
+
+  for(auto c : clusters){
+      std::vector<std::shared_ptr<cluster>> subclusters;
+      c->getSubclusters(&subclusters);
+      if(c->getWeight() > 0)
+        (*target)[0].push_back(subclusters[0]);
+  }
+  */
+
+  /*
+  qDebug() << "Random subcluster after grouping.";
+  gAlgorithm->groupClusters(container, &clusters);
+
+  (*target).clear();
+
+  for(auto c : clusters){
+      std::vector<std::shared_ptr<cluster>> subclusters;
+      c->getSubclusters(&subclusters);
+      if(c->getWeight() > 0){
+        int rand = _gen.bounded(0, subclusters.size() - 1);
+        (*target).push_back(subclusters[rand]);
+      }
+  }
+  */
 }
 
 void medoidStoringAlgorithm::fillBufferWithData()
@@ -41,10 +84,9 @@ void medoidStoringAlgorithm::selectMedoids(std::vector<std::shared_ptr<cluster>>
   gAlgorithm->groupClusters(container, &clusters);
 }
 
-void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shared_ptr<cluster> > > *target, unsigned int level)
+void medoidStoringAlgorithm::addMedoidsToStorage(std::vector<std::shared_ptr<cluster> > *target)
 {
-  (*target)[level].clear();
-  long clusterShift = target->at(level).size();
+  target->clear();
 
   qDebug() << "Creating summaries.";
 
@@ -54,44 +96,45 @@ void medoidStoringAlgorithm::addMedoidsOnLevel(std::vector<std::vector<std::shar
     // During experiments it happened so that two clusters had the same value which caused problems.
     // Until discussed further omit clusters with weight 0.
     if(clusters[i]->getWeight() == 0) continue;
-    //if(clusters[i]->size() > 1) continue;
 
-    std::shared_ptr<sample> s;
+    std::shared_ptr<cluster> c;
 
-    s = clusters[i].get()->getMedoid()->getObject();
-
-    std::shared_ptr<cluster> c = std::make_shared<cluster>(cluster(clusterShift + i, s));
-    c->setWeight(clusters[i]->getWeight());
-    c->setVariantion(clusters[i]->getVariation());
-
-    // Prediction
-    c->_lastPrediction = clusters[i]->getLastPrediction();
-    c->_deactualizationParameter = clusters[i]->getDeactualizationParameter();
-    c->predictionParameters = clusters[i]->getPredictionParameters();
-    c->_djVector = clusters[i]->getDjVector();
-    c->_j = clusters[i]->getPrognosisJ();
-
-    c->timestamp = clusters[i]->getTimestamp();
-
-    if(clusters[i]->size() > 1){
-      qDebug() << "Here!";
-      std::vector<std::shared_ptr<cluster>> subclusters;
-      clusters[i]->getSubclusters(&subclusters);
-      //c = subclusters[0];
-
+    if(clusters[i]->size() == 1){
+        std::vector<std::shared_ptr<cluster>> subclusters;
+        clusters[i]->getSubclusters(&subclusters);
+        c = subclusters[0];
     }
-    else{
-      target->at(level).push_back(c);
+    else {
+        std::shared_ptr<sample> s;
+
+        s = clusters[i].get()->getMedoid()->getObject();
+
+        c = std::make_shared<cluster>(cluster(i, s));
+        c->setWeight(clusters[i]->getWeight());
+        c->setVariantion(clusters[i]->getVariation());
+
+        // Prediction
+        c->_lastPrediction = clusters[i]->getLastPrediction();
+        c->_deactualizationParameter = clusters[i]->getDeactualizationParameter();
+        c->predictionParameters = clusters[i]->getPredictionParameters();
+        c->_djVector = clusters[i]->getDjVector();
+        c->_j = clusters[i]->getPrognosisJ();
+
+        c->timestamp = clusters[i]->getTimestamp();
     }
+
+    target->push_back(c);
   }
+
+
 
   clusters.clear();
 
   long sumWeight = 0;
 
-  for(std::shared_ptr<cluster> c : target->at(0))
+  for(std::shared_ptr<cluster> c : *target)
       sumWeight += c.get()->getWeight();
 
-  qDebug() << "Clusters size: " << target->at(0).size();
+  qDebug() << "Clusters size: " << target->size();
   qDebug() << "Buffer size: " << BUFFER_SIZE;
 }
